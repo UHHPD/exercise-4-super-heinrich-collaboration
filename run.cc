@@ -60,6 +60,12 @@ void runTests() {
     std::cout << (test() ? " ok" : " FAILED!") << std::endl;
 }
 
+double uncertainty(Data set1, Data set2, double bin, double ndev){
+    double difference = set1.measurement(27) - set2.measurement(27);
+    double diff_unc = sqrt(pow(set1.error(27),2) + pow(set2.error(27),2));
+    return difference - ndev*diff_unc;
+    }
+
 int main() {
   using namespace std;
 
@@ -68,12 +74,32 @@ int main() {
   cout << "******************************************************" << endl;
   // create an object which holds data of experiment A
   Data datA("exp_A");
+  Data datB("exp_B");
+  Data datC("exp_C");
+  Data datD("exp_D");
 
   // here is the data from experiment A
   cout << "bin 27: from " << datA.binLow(27) << " to " << datA.binHigh(27)
        << endl;
   cout << "measurement of experiment A in bin 27: " << datA.measurement(27)
        << endl;
+
+  vector<Data> datasets{datA, datB, datC, datD};
+
+  // Task c)
+  for(Data entry: datasets){
+      cout << entry.measurement(27) << endl;
+  }
+
+  for(int set1 = 1; set1 <= 4; ++set1){
+    for(int set2 = 1; set2 <= 4; ++set2){
+      for(int ndev = 1; ndev <= 5; ++ndev){
+        cout << "Datasets: " << set1 << ", " << set2 << " ;" << ndev << " Deviations" << endl;
+        cout << uncertainty(datasets[set1], datasets[set2], 27, ndev) << endl;
+      }
+    }
+  }
+
 
   return 0;
 }
